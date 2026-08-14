@@ -21,7 +21,7 @@ steps:
 # Preparar análisis SonarCloud
 - task: SonarCloudPrepare@4
   inputs:
-    SonarCloud: 'github.com_Alexiotovv'
+    SonarCloud: 'sonar_cloud_token'
     organization: 'alexiotovv'
     scannerMode: 'dotnet'
     projectKey: 'WebApi-CRUD'
