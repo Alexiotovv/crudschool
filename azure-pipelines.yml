@@ -24,8 +24,8 @@ steps:
     SonarCloud: 'sonar_cloud_token'
     organization: 'alexiotovv'
     scannerMode: 'dotnet'
-    projectKey: 'WebApi-CRUD'
-    projectName: 'WebApi-CRUD'
+    projectKey: 'crudschool'
+    projectName: 'crudschool'
   displayName: 'Preparar análisis SonarCloud'
 
 # Compilar
