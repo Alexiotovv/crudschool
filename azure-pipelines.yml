@@ -22,7 +22,7 @@ stages:
         displayName: 'Restaurar dependencias'
       
       # Preparar análisis SonarQube/SonarCloud
-      - task: SonarCloudPrepare@4
+      - task: SonarCloudPrepare@3
         inputs:
           SonarCloud: 'github.com_Alexiotovv'
           organization: 'alexiotovv'
