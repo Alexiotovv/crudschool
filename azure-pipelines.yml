@@ -1,52 +1,54 @@
 trigger:
-  - main # Se ejecuta al ahcer push en main
+- main
 
 pool:
-  vmImage: 'windows-latest' # Usamos windows para .NET
+  vmImage: 'windows-latest'
 
 variables:
   buildConfiguration: 'Release'
 
-stages:
-- stage: BuildAndTest
-  displayName: 'Compilación y Pruebas'
-  jobs:
-  - job: Build
-    steps:
-      - task: UseDotNet@2
-        inputs:
-          packageType: 'sdk'
-          version: '8.0.0'
-        displayName: 'Instalar .NET SDK'
-      - script: dotnet restore
-        displayName: 'Restaurar dependencias'
-      
-      # Preparar análisis SonarQube/SonarCloud
-      - task: SonarCloudPrepare@3
-        inputs:
-          SonarCloud: 'github.com_Alexiotovv'
-          organization: 'alexiotovv'
-          scannerMode: 'MSBuild'
-          projectKey: 'WebApi-CRUD' # clave única del proyecto en SonarQube/SonarCloud
-          projectName: 'WebApi-CRUD'
+steps:
 
-      # Compilar el proyecto
-      - script: dotnet build --configuration $(buildConfiguration)
-        displayName: 'Compilar proyecto'
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '8.0.x'
+  displayName: 'Instalar .NET SDK'
 
-      # Analizar código con SonarQube
-      - task: SonarCloudAnalyze@4
+- script: dotnet restore
+  displayName: 'Restaurar dependencias'
 
-      # Publicar resultados del análisis
-      - task: SonarCloudPublish@4
-        inputs:
-          pollingTimeoutSec: '300'
+# Preparar análisis SonarCloud
+- task: SonarCloudPrepare@4
+  inputs:
+    SonarCloud: 'github.com_Alexiotovv'
+    organization: 'alexiotovv'
+    scannerMode: 'dotnet'
+    projectKey: 'WebApi-CRUD'
+    projectName: 'WebApi-CRUD'
+  displayName: 'Preparar análisis SonarCloud'
 
-      - script: dotnet test --configuration $(buildConfiguration) --no-build
-        displayName: 'Ejecutar pruebas unitarias'
+# Compilar
+- script: dotnet build --configuration $(buildConfiguration) --no-restore
+  displayName: 'Compilar proyecto'
 
-      - task: PublishBuildArtifacts@1
-        inputs:
-          PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-          ArtifactName: 'drop'
-          publishLocation: 'Container'
+# Analizar
+- task: SonarCloudAnalyze@4
+  displayName: 'Analizar código con SonarCloud'
+
+# Publicar resultados
+- task: SonarCloudPublish@4
+  inputs:
+    pollingTimeoutSec: '300'
+  displayName: 'Publicar resultados SonarCloud'
+
+# Tests
+- script: dotnet test --configuration $(buildConfiguration) --no-build
+  displayName: 'Ejecutar pruebas unitarias'
+
+# Artefactos
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
