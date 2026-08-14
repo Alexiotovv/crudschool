@@ -2,7 +2,7 @@ trigger:
   - main # Se ejecuta al ahcer push en main
 
 pool:
-  vmImage:'windows-latest' # Usamos windows para .NET
+  vmImage: 'windows-latest' # Usamos windows para .NET
 
 variables:
   buildConfiguration: 'Release'
