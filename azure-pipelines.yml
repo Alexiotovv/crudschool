@@ -21,8 +21,26 @@ stages:
       - script: dotnet restore
         displayName: 'Restaurar dependencias'
       
+      # Preparar análisis SonarQube/SonarCloud
+      - task: SonarCloudPrepare@4
+        inputs:
+          SonarCloud: 'github.com_Alexiotovv'
+          organization: 'alexiotovv'
+          scannerMode: 'MSBuild'
+          projectKey: 'WebApi-CRUD' # clave única del proyecto en SonarQube/SonarCloud
+          projectName: 'WebApi-CRUD'
+
+      # Compilar el proyecto
       - script: dotnet build --configuration $(buildConfiguration)
         displayName: 'Compilar proyecto'
+
+      # Analizar código con SonarQube
+      - task: SonarCloudAnalyze@4
+
+      # Publicar resultados del análisis
+      - task: SonarCloudPublish@4
+        inputs:
+          pollingTimeoutSec: '300'
 
       - script: dotnet test --configuration $(buildConfiguration) --no-build
         displayName: 'Ejecutar pruebas unitarias'
